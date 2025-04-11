@@ -1,0 +1,27 @@
+name: Compile IconSvg.dylib
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: |
+          brew install ldid
+          git clone --recursive https://github.com/theos/theos.git ~/theos
+
+      - name: Compile IconSvg.dylib
+        run: |
+          clang -shared -framework UIKit -fobjc-arc IconSvg.m -o IconSvg.dylib
+          ldid -S IconSvg.dylib
+          zip IconSvg.zip IconSvg.dylib
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: IconSvg-Plugin
+          path: IconSvg.zip
