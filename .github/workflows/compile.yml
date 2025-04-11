@@ -9,15 +9,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Install dependencies
+      - name: Install Xcode CLI Tools
         run: |
-          brew install ldid
-          git clone --recursive https://github.com/theos/theos.git ~/theos
+          sudo xcode-select --reset
+          sudo xcode-select --install
 
-      - name: Compile IconSvg.dylib
+      - name: Compile
         run: |
-          clang -shared -framework UIKit -fobjc-arc IconSvg.m -o IconSvg.dylib
-          ldid -S IconSvg.dylib
+          # 获取 iOS SDK 路径
+          SDK_PATH=$(xcrun --sdk iphoneos --show-sdk-path)
+          # 编译
+          clang -isysroot $SDK_PATH -shared -framework UIKit -fobjc-arc IconSvg.m -o IconSvg.dylib
+          # 签名
+          curl -LO https://github.com/ProcursusTeam/ldid/releases/download/v2.1.5-procursus7/ldid_macosx_arm64
+          chmod +x ldid_macosx_arm64
+          ./ldid_macosx_arm64 -S IconSvg.dylib
+          # 打包
           zip IconSvg.zip IconSvg.dylib
 
       - name: Upload artifact
