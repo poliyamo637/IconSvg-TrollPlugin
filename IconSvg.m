@@ -20,15 +20,4 @@ void traverseViews(UIView *view, NSMutableString *output) {
         } else if ([subview isKindOfClass:[UILabel class]]) {
             [output appendFormat:@"📛 [UILabel]\n- 文本: \"%@\"\n", ((UILabel *)subview).text ?: @"空"];
         }
-        traverseViews(subview, output);
-    }
-}
-
-void showIconNames() {
-    NSMutableString *output = [NSMutableString string];
-    traverseViews([UIApplication sharedApplication].keyWindow, output);
-    
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"IconSvg" message:output preferredStyle:UIAlertControllerStyleAlert];
-    [alert addAction:[UIAlertAction actionWithTitle:@"关闭" style:UIAlertActionStyleCancel handler:nil]];
-    [[UIApplication sharedApplication].keyWindow.rootViewController presentViewController:alert animated:YES completion:nil];
-}
+        traverseViews(subview, output
